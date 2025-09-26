@@ -1,32 +1,19 @@
 import React, { useState } from 'react';
-import { 
-  Home, 
-  Car, 
-  Users, 
-  DollarSign, 
-  BarChart3, 
-  Settings, 
-  FileText,
-  Calendar,
-  MapPin,
-  Bell
-} from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Hop as Home, Car, DollarSign, ChartBar as BarChart3, FileText, Calendar, MapPin } from 'lucide-react';
 
 const menuItems = [
-  { id: 'dashboard', icon: Home, label: 'Dashboard', active: true },
-  { id: 'trips', icon: Car, label: 'Trips' },
-  { id: 'users', icon: Users, label: 'Users' },
-  { id: 'revenue', icon: DollarSign, label: 'Revenue' },
-  { id: 'analytics', icon: BarChart3, label: 'Analytics' },
-  { id: 'bookings', icon: Calendar, label: 'Bookings' },
-  { id: 'locations', icon: MapPin, label: 'Locations' },
-  { id: 'reports', icon: FileText, label: 'Reports' },
-  { id: 'notifications', icon: Bell, label: 'Notifications' },
-  { id: 'settings', icon: Settings, label: 'Settings' }
+  { id: '/', icon: Home, label: 'Dashboard', path: '/' },
+  { id: 'bookings', icon: Calendar, label: 'Bookings', path: '/bookings' },
+  { id: 'locations', icon: MapPin, label: 'Locations', path: '/locations' },
+  { id: 'reports', icon: FileText, label: 'Reports', path: '/reports' },
+  { id: 'revenue', icon: DollarSign, label: 'Revenue', path: '/revenue' },
+  { id: 'analytics', icon: BarChart3, label: 'Analytics', path: '/analytics' }
 ];
 
 const Sidebar = () => {
-  const [activeItem, setActiveItem] = useState('dashboard');
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="sidebar">
@@ -42,11 +29,12 @@ const Sidebar = () => {
       <nav className="sidebar-nav">
         {menuItems.map((item) => {
           const IconComponent = item.icon;
+          const isActive = location.pathname === item.path;
           return (
             <button
               key={item.id}
-              className={`nav-item ${activeItem === item.id ? 'active' : ''}`}
-              onClick={() => setActiveItem(item.id)}
+              className={`nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => navigate(item.path)}
             >
               <IconComponent size={20} />
               <span>{item.label}</span>

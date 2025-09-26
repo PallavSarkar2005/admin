@@ -1,7 +1,15 @@
-import React from 'react';
-import { Bell, Search, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, User } from 'lucide-react';
 
-const Header = () => {
+const Header = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    onSearch(value);
+  };
+
   return (
     <header className="dashboard-header">
       <div className="header-left">
@@ -12,13 +20,13 @@ const Header = () => {
       <div className="header-right">
         <div className="search-box">
           <Search size={18} />
-          <input type="text" placeholder="Search..." />
+          <input 
+            type="text" 
+            placeholder="Search trips, users, bookings..." 
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
         </div>
-        
-        <button className="notification-btn">
-          <Bell size={20} />
-          <span className="notification-badge">3</span>
-        </button>
         
         <div className="user-profile">
           <div className="user-avatar">

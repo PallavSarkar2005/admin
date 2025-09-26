@@ -1,7 +1,7 @@
 import React from 'react';
 import { Clock, MapPin, User } from 'lucide-react';
 
-const RecentActivity = () => {
+const RecentActivity = ({ searchTerm = '' }) => {
   const activities = [
     {
       id: 1,
@@ -45,6 +45,11 @@ const RecentActivity = () => {
     }
   ];
 
+  const filteredActivities = activities.filter(activity =>
+    activity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    activity.user.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="activity-card">
       <div className="card-header">
@@ -53,7 +58,7 @@ const RecentActivity = () => {
       </div>
       
       <div className="activity-list">
-        {activities.map((activity) => (
+        {filteredActivities.map((activity) => (
           <div key={activity.id} className="activity-item">
             <div className="activity-icon">
               {activity.type === 'trip' ? <MapPin size={18} /> : <User size={18} />}
