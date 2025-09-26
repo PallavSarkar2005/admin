@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DailyTripsChart from '../components/DailyTripsChart';
 import { ChartBar as BarChart3, Users, Clock, MapPin, TrendingUp, Activity } from 'lucide-react';
 
 const Analytics = ({ searchTerm }) => {
@@ -37,6 +38,7 @@ const Analytics = ({ searchTerm }) => {
       </div>
 
       <div className="analytics-overview">
+        {/* Total Users Card */}
         <div className="analytics-card">
           <div className="analytics-icon">
             <Users size={24} />
@@ -51,6 +53,7 @@ const Analytics = ({ searchTerm }) => {
           </div>
         </div>
 
+        {/* Active Users Card */}
         <div className="analytics-card">
           <div className="analytics-icon">
             <Activity size={24} />
@@ -65,6 +68,7 @@ const Analytics = ({ searchTerm }) => {
           </div>
         </div>
 
+        {/* Avg Trip Duration Card */}
         <div className="analytics-card">
           <div className="analytics-icon">
             <Clock size={24} />
@@ -80,22 +84,12 @@ const Analytics = ({ searchTerm }) => {
       </div>
 
       <div className="analytics-charts">
-        <div className="chart-container">
-          <h3>User Activity by Hour</h3>
-          <div className="activity-chart">
-            <div className="activity-bars">
-              {userActivity.map((data, index) => (
-                <div key={index} className="activity-bar-container">
-                  <div 
-                    className="activity-bar" 
-                    style={{ height: `${(data.users / 2500) * 100}%` }}
-                  ></div>
-                  <span className="activity-label">{data.hour}</span>
-                  <span className="activity-value">{data.users}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* The overall charts container: we will use a grid to place the chart and routes side-by-side or stacked */}
+        
+        {/* 2. Integrate the DailyTripsChart, replacing the User Activity by Hour chart */}
+        <div className="chart-container" style={{ gridColumn: 'span 2' }}>
+          {/* Note: The DailyTripsChart component already includes its own title/styling */}
+          <DailyTripsChart /> 
         </div>
 
         <div className="routes-analytics">
