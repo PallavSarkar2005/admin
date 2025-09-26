@@ -1,9 +1,5 @@
-// src/pages/Reports.jsx
-
 import React, { useState, useEffect } from 'react';
-// Import the necessary icons, including PlusCircle for the new action button
 import { FileText, Download, Calendar, DollarSign, Users, PlusCircle } from 'lucide-react'; 
-// 1. Import report generation helpers and data
 import { 
     dailyTripsData, 
     generateDailyTripsCSV, 

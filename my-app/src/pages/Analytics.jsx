@@ -1,6 +1,9 @@
+// src/pages/Analytics.jsx
+
 import React, { useState } from 'react';
-import DailyTripsChart from '../components/DailyTripsChart';
-import { ChartBar as BarChart3, Users, Clock, MapPin, TrendingUp, Activity } from 'lucide-react';
+// Correct import: ForecastChart
+import ForecastChart from '../components/ForecastChart'; 
+import { Users, Clock, MapPin, TrendingUp, Activity } from 'lucide-react';
 
 const Analytics = ({ searchTerm }) => {
   const [analyticsData] = useState({
@@ -11,16 +14,6 @@ const Analytics = ({ searchTerm }) => {
     userGrowth: 15.3,
     tripGrowth: 12.5
   });
-
-  const [userActivity] = useState([
-    { hour: '6 AM', users: 245 },
-    { hour: '9 AM', users: 892 },
-    { hour: '12 PM', users: 1456 },
-    { hour: '3 PM', users: 1123 },
-    { hour: '6 PM', users: 2134 },
-    { hour: '9 PM', users: 1567 },
-    { hour: '12 AM', users: 456 }
-  ]);
 
   const [topRoutes] = useState([
     { route: 'Downtown → Airport', trips: 1247, revenue: '$56,115' },
@@ -84,12 +77,10 @@ const Analytics = ({ searchTerm }) => {
       </div>
 
       <div className="analytics-charts">
-        {/* The overall charts container: we will use a grid to place the chart and routes side-by-side or stacked */}
-        
-        {/* 2. Integrate the DailyTripsChart, replacing the User Activity by Hour chart */}
+        {/* 2. CORRECT COMPONENT USAGE */}
         <div className="chart-container" style={{ gridColumn: 'span 2' }}>
-          {/* Note: The DailyTripsChart component already includes its own title/styling */}
-          <DailyTripsChart /> 
+          {/* RENDER THE CORRECTLY IMPORTED COMPONENT */}
+          <ForecastChart /> 
         </div>
 
         <div className="routes-analytics">

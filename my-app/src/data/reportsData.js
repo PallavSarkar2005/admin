@@ -1,51 +1,84 @@
 // src/data/reportsData.js
 
-// --- 1. SAMPLE DATA (from DailyTripsChart) ---
-// In a real application, this data would be fetched from the server.
+// Historical trip data used by the charts and reports
 export const dailyTripsData = [
-  { date: "2025-09-21", totalTrips: 15 },
-  { date: "2025-09-22", totalTrips: 22 },
-  { date: "2025-09-23", totalTrips: 18 },
-  { date: "2025-09-24", totalTrips: 25 },
-  { date: "2025-09-25", totalTrips: 20 },
-  { date: "2025-09-26", totalTrips: 30 },
-  { date: "2025-09-27", totalTrips: 35 },
+  { date: "2025-09-21", totalTrips: 15, isForecast: false },
+  { date: "2025-09-22", totalTrips: 22, isForecast: false },
+  { date: "2025-09-23", totalTrips: 18, isForecast: false },
+  { date: "2025-09-24", totalTrips: 25, isForecast: false },
+  { date: "2025-09-25", totalTrips: 20, isForecast: false },
+  // Add a few more days for better trend visualization
+  { date: "2025-09-26", totalTrips: 28, isForecast: false },
+  { date: "2025-09-27", totalTrips: 21, isForecast: false }, 
 ];
 
-// --- 2. CSV Generation Function ---
-export const generateDailyTripsCSV = (data) => {
-  // Define CSV headers
-  const headers = ['Date', 'Total Trips'];
 
-  // Map data array to CSV rows
-  const csvRows = data.map(row => [
-    row.date,
-    row.totalTrips
-  ]);
-
-  // Combine headers and rows
-  const csvContent = [
-    headers.join(','), // Join headers with commas
-    ...csvRows.map(row => row.join(',')) // Join rows with commas
-  ].join('\n'); // Join lines with newlines
-
-  return csvContent;
+/**
+ * Local forecast generator function (No API Call).
+ * Generates a simple linear forecast based on the last few historical data points.
+ */
+export const generateLocalForecast = (data, days = 7) => {
+    if (!data || data.length < 2) return [];
+    
+    // Simple logic: Base the forecast on the last data point's value
+    const lastValue = data[data.length - 1].totalTrips;
+    
+    // Get the date of the last historical data point
+    const lastDate = new Date(data[data.length - 1].date);
+    
+    const forecast = [];
+    for (let i = 1; i <= days; i++) {
+        const nextDate = new Date(lastDate);
+        nextDate.setDate(lastDate.getDate() + i);
+        
+        // Apply a simple variation for forecasting
+        const predictedValue = Math.round(
+            lastValue + (i * 1.5) + Math.sin(i) * 5
+        );
+        
+        forecast.push({
+            date: nextDate.toISOString().slice(0, 10),
+            totalTrips: Math.max(10, predictedValue), // Ensure trips don't go below 10
+            isForecast: true
+        });
+    }
+    return forecast;
 };
 
-// --- 3. CSV Download Function ---
-export const downloadCSV = (csvContent, filename) => {
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
+// ... existing CSV functions below ...
 
-  if (link.download !== undefined) {
-    // Browsers that support HTML5 download attribute
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
+/**
+ * Generates a CSV formatted string from the daily trip data.
+ */
+export const generateDailyTripsCSV = (data) => {
+    let csv = "Date,TotalTrips\n";
+    data.forEach(d => {
+        // Exclude forecast data from the CSV export by checking 'isForecast' property
+        if (!d.isForecast) {
+            csv += `${d.date},${d.totalTrips}\n`;
+        }
+    });
+    return csv;
+};
+
+/**
+ * Triggers a download of the provided CSV content.
+ */
+export const downloadCSV = (csvContent, filename) => {
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) { 
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } else {
+        // Fallback for older browsers
+        alert("Download feature not supported by your browser.");
+    }
 };
