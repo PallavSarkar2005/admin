@@ -1,24 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import MetricsCards from './components/MetricsCards';
+import RecentActivity from './components/RecentActivity';
+import QuickStats from './components/QuickStats';
+import './App.css';
 
 function App() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-      <h1 className="text-4xl font-bold mb-6">🚀 Vite + React + Tailwind</h1>
-
-      <button
-        className="px-6 py-3 bg-blue-600 rounded-lg shadow hover:bg-blue-700 transition"
-      >
-        Click Me
-      </button>
-
-      <p className="mt-4 text-gray-300">
-        Tailwind is <span className="text-green-400 font-semibold">working!</span>
-      </p>
+    <div className="dashboard-layout">
+      <Sidebar />
+      
+      <div className="main-content">
+        <Header />
+        
+        <div className="dashboard-content">
+          <MetricsCards />
+          
+          <div className="chart-placeholder">
+            <h3>Revenue Chart</h3>
+            <div className="chart-mock">
+              <div className="chart-bars">
+                <div className="bar" style={{height: '60%'}}></div>
+                <div className="bar" style={{height: '80%'}}></div>
+                <div className="bar" style={{height: '45%'}}></div>
+                <div className="bar" style={{height: '90%'}}></div>
+                <div className="bar" style={{height: '70%'}}></div>
+                <div className="bar" style={{height: '85%'}}></div>
+                <div className="bar" style={{height: '95%'}}></div>
+              </div>
+              <div className="chart-labels">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span>Sun</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="dashboard-grid">
+            <div className="grid-left">
+              <RecentActivity />
+            </div>
+            
+            <div className="grid-right">
+              <QuickStats />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
