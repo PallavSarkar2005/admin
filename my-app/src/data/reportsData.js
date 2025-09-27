@@ -1,22 +1,13 @@
-// src/data/reportsData.js
-
-// Historical trip data used by the charts and reports
 export const dailyTripsData = [
   { date: "2025-09-21", totalTrips: 15, isForecast: false },
   { date: "2025-09-22", totalTrips: 22, isForecast: false },
   { date: "2025-09-23", totalTrips: 18, isForecast: false },
   { date: "2025-09-24", totalTrips: 25, isForecast: false },
   { date: "2025-09-25", totalTrips: 20, isForecast: false },
-  // Add a few more days for better trend visualization
   { date: "2025-09-26", totalTrips: 28, isForecast: false },
   { date: "2025-09-27", totalTrips: 21, isForecast: false }, 
 ];
 
-
-/**
- * Local forecast generator function (No API Call).
- * Generates a simple linear forecast based on the last few historical data points.
- */
 export const generateLocalForecast = (data, days = 7) => {
     if (!data || data.length < 2) return [];
     
@@ -45,11 +36,6 @@ export const generateLocalForecast = (data, days = 7) => {
     return forecast;
 };
 
-// ... existing CSV functions below ...
-
-/**
- * Generates a CSV formatted string from the daily trip data.
- */
 export const generateDailyTripsCSV = (data) => {
     let csv = "Date,TotalTrips\n";
     data.forEach(d => {
@@ -61,9 +47,6 @@ export const generateDailyTripsCSV = (data) => {
     return csv;
 };
 
-/**
- * Triggers a download of the provided CSV content.
- */
 export const downloadCSV = (csvContent, filename) => {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');

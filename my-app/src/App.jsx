@@ -30,14 +30,10 @@ function App() {
     return <div className="flex items-center justify-center min-h-screen text-xl">Loading application...</div>;
   }
 
-  // --- FAILSAVE AUTHENTICATION LOGIC ---
-  // If NOT authenticated (which is the case after every reload), show the modal.
   if (!isAuthenticated) {
       return <LoginModal />; 
   }
-
-  // --- RENDER DASHBOARD LAYOUT (Only runs if isAuthenticated === true) ---
-  return (
+ return (
     <div className="dashboard-layout">
       <Sidebar />
       <div className="main-content">

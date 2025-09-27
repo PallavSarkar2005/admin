@@ -1,3 +1,5 @@
+// src/pages/Bookings.jsx
+
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, User, ListFilter as Filter } from 'lucide-react';
 
@@ -45,11 +47,13 @@ const Bookings = ({ searchTerm }) => {
     }
   ]);
 
+  // The filtering logic is already robust: checks customer, pickup, destination, and ID.
   const filteredBookings = bookings.filter(booking =>
     booking.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
     booking.pickup.toLowerCase().includes(searchTerm.toLowerCase()) ||
     booking.destination.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.id.toLowerCase().includes(searchTerm.toLowerCase())
+    booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.status.toLowerCase().includes(searchTerm.toLowerCase()) // Added status check for completeness
   );
 
   const getStatusColor = (status) => {
@@ -78,45 +82,51 @@ const Bookings = ({ searchTerm }) => {
       </div>
 
       <div className="bookings-grid">
-        {filteredBookings.map((booking) => (
-          <div key={booking.id} className="booking-card">
-            <div className="booking-header">
-              <div className="booking-id">#{booking.id}</div>
-              <div className={`booking-status ${getStatusColor(booking.status)}`}>
-                {booking.status}
+        {filteredBookings.length > 0 ? (
+          filteredBookings.map((booking) => (
+            <div key={booking.id} className="booking-card">
+              <div className="booking-header">
+                <div className="booking-id">#{booking.id}</div>
+                <div className={`booking-status ${getStatusColor(booking.status)}`}>
+                  {booking.status}
+                </div>
+              </div>
+              
+              <div className="booking-customer">
+                <User size={16} />
+                <span>{booking.customer}</span>
+              </div>
+              
+              <div className="booking-route">
+                <div className="route-item">
+                  <MapPin size={14} />
+                  <span>{booking.pickup}</span>
+                </div>
+                <div className="route-arrow">→</div>
+                <div className="route-item">
+                  <MapPin size={14} />
+                  <span>{booking.destination}</span>
+                </div>
+              </div>
+              
+              <div className="booking-details">
+                <div className="detail-item">
+                  <Calendar size={14} />
+                  <span>{booking.date}</span>
+                </div>
+                <div className="detail-item">
+                  <Clock size={14} />
+                  <span>{booking.time}</span>
+                </div>
+                <div className="booking-fare">{booking.fare}</div>
               </div>
             </div>
-            
-            <div className="booking-customer">
-              <User size={16} />
-              <span>{booking.customer}</span>
-            </div>
-            
-            <div className="booking-route">
-              <div className="route-item">
-                <MapPin size={14} />
-                <span>{booking.pickup}</span>
-              </div>
-              <div className="route-arrow">→</div>
-              <div className="route-item">
-                <MapPin size={14} />
-                <span>{booking.destination}</span>
-              </div>
-            </div>
-            
-            <div className="booking-details">
-              <div className="detail-item">
-                <Calendar size={14} />
-                <span>{booking.date}</span>
-              </div>
-              <div className="detail-item">
-                <Clock size={14} />
-                <span>{booking.time}</span>
-              </div>
-              <div className="booking-fare">{booking.fare}</div>
-            </div>
+          ))
+        ) : (
+          <div className="text-center p-10 text-gray-500 bg-white rounded-xl shadow-lg">
+              No bookings found matching "{searchTerm}".
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

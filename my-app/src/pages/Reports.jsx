@@ -1,3 +1,5 @@
+// src/pages/Reports.jsx
+
 import React, { useState, useEffect } from 'react';
 import { FileText, Download, Calendar, DollarSign, Users, PlusCircle } from 'lucide-react'; 
 import { 
@@ -17,7 +19,7 @@ const Reports = ({ searchTerm }) => {
     { id: 4, name: 'Driver Performance Report', type: 'HR', date: '2021-01-12', status: 'completed', size: '1.5 MB' }
   ]);
 
-  // 2. NEW State for dynamically generated reports (from session storage)
+  // State for dynamically generated reports (from session storage)
   const [recentReports, setRecentReports] = useState([]);
 
   // Load recent reports from session storage on component mount
@@ -34,14 +36,31 @@ const Reports = ({ searchTerm }) => {
     report.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // --- NEW LOGIC FUNCTIONS ---
+  // Combine mock and recent reports for display and calculations
+  const allReports = [...recentReports, ...filteredMockReports].sort((a, b) => b.id - a.id);
+  
+  // --- DYNAMIC STATS CALCULATION ---
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const currentDay = now.getDate();
+  const currentMonthName = now.toLocaleDateString('en-US', { month: 'long' });
+
+  // Count reports generated in the current month (only from recentReports)
+  const reportsThisMonth = recentReports.filter(report => {
+      const reportDate = new Date(report.date);
+      return reportDate.getMonth() === currentMonth && reportDate.getFullYear() === currentYear;
+  }).length;
+  
+  // --- END DYNAMIC STATS CALCULATION ---
+  
+  // --- LOGIC FUNCTIONS ---
   
   const handleGenerateReport = () => {
     // 1. Generate CSV content
     const csvContent = generateDailyTripsCSV(dailyTripsData);
     
     // 2. Create a timestamped filename
-    const now = new Date();
     const dateString = now.toISOString().slice(0, 10);
     const timeString = now.toTimeString().slice(0, 8).replace(/:/g, '');
     const filename = `Daily_Trips_Report_${dateString}_${timeString}.csv`;
@@ -61,7 +80,7 @@ const Reports = ({ searchTerm }) => {
     };
 
     const updatedReports = [newReport, ...recentReports];
-    setRecentReports(updatedReports);
+    setRecentReports(updatedReports); // Update React state
     sessionStorage.setItem(REPORTS_KEY, JSON.stringify(updatedReports));
   };
   
@@ -69,19 +88,36 @@ const Reports = ({ searchTerm }) => {
     // Downloads a report from the stored CSV content
     downloadCSV(report.data, report.filename);
   };
-  // --- END NEW LOGIC FUNCTIONS ---
+  // --- END LOGIC FUNCTIONS ---
 
+  // RECALCULATE STATS CARD DATA dynamically
   const reportStats = [
-    { title: 'Total Reports', value: '24', icon: FileText, color: 'blue' },
-    { title: 'This Month', value: '8', icon: Calendar, color: 'green' },
-    { title: 'Revenue Reports', value: '$2.4M', icon: DollarSign, color: 'purple' },
-    { title: 'User Reports', value: '12.8K', icon: Users, color: 'orange' }
+    { 
+        title: 'Total Generated Reports', 
+        value: recentReports.length, 
+        icon: FileText, 
+        color: 'blue',
+        type: 'dynamic_count'
+    },
+    { 
+        // UPDATED TITLE & TYPE: Now a static date display card
+        title: `${currentMonthName} ${currentDay}`, 
+        value: reportsThisMonth, 
+        icon: Calendar, 
+        color: 'green',
+        type: 'date_display' // Use this type to skip the value rendering
+    },
+    { title: 'Revenue Reports (Mock)', value: '$2.4M', icon: DollarSign, color: 'purple', type: 'mock' },
+    { 
+        // UPDATED: Show count of existing mock reports (User Reports)
+        title: 'User Reports (Mock)', 
+        value: reports.length, // Show count of the mock reports
+        icon: Users, 
+        color: 'orange',
+        type: 'mock' 
+    }
   ];
 
-  // Combine mock reports and newly generated reports for display
-  // Note: We prioritize displaying the dynamically generated reports in the list
-  const allReports = [...recentReports, ...filteredMockReports].sort((a, b) => b.id - a.id);
-  
   return (
     <div className="page-content">
       <div className="page-header">
@@ -99,7 +135,11 @@ const Reports = ({ searchTerm }) => {
               </div>
               <div className="stat-content">
                 <h3>{stat.title}</h3>
-                <p className="stat-number">{stat.value}</p>
+                
+                {/* CONDITIONAL RENDERING: Only show the number if it's NOT the date_display card */}
+                {stat.type !== 'date_display' && (
+                    <p className="stat-number">{stat.value}</p>
+                )}
               </div>
             </div>
           );
@@ -107,7 +147,7 @@ const Reports = ({ searchTerm }) => {
       </div>
 
       <div className="reports-actions">
-        {/* 3. ATTACH the CSV generation function to the button */}
+        {/* ATTACH the CSV generation function to the button */}
         <button 
           className="btn-primary" 
           onClick={handleGenerateReport}
@@ -123,7 +163,7 @@ const Reports = ({ searchTerm }) => {
           <h3>Recent Reports</h3>
         </div>
         
-        {/* 4. RENDER the combined list of reports */}
+        {/* RENDER the combined list of reports */}
         {allReports.map((report) => (
           <div key={report.id} className="report-item">
             <div className="report-info">
